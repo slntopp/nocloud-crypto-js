@@ -24,10 +24,14 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
+	"syscall/js"
 )
 
 //export sha256HashCertificate
-func sha256HashCertificate(in []byte) (string, error) {
+func sha256HashCertificate(jsin js.Value) (string, error) {
+	var in []byte
+	js.CopyBytesToGo(in, jsin)
+
 	block, _ := pem.Decode(in)
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
