@@ -4,7 +4,7 @@
   "main": "index.js",
   "repository": "git@github.com:slntopp/nocloud-crypto-js.git",
   "author": "Mik <info@slnt-opp.xyz>",
-  "license": "Apache2",
+  "license": "Apache-2.0",
   "private": false,
   "scripts": {
     "test": "jest"
