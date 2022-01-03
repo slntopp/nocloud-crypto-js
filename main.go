@@ -17,3 +17,5 @@ func sha256HashCertificate(in []byte) (string, error) {
 	hash := sha256.Sum256(cert.Raw)
 	return hex.EncodeToString(hash[:]), nil
 }
+
+func main() {}
