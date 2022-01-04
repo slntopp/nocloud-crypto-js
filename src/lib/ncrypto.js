@@ -15,30 +15,17 @@ limitations under the License.
 */
 const fs = require("fs");
 const path = require("path");
-require("./wasm_exec.js");
+require("./wasm_exec");
 
 let wasm;
 
-async function init() {
+module.exports = async () => {
   const go = new Go();
+
   const wasmPath = path.resolve(__dirname, ".", "ncrypto.wasm");
   const buffer = fs.readFileSync(wasmPath);
-  const results = await WebAssembly.instantiate(buffer, go.importObject);
-  console.log("Instance", results.instance);
-  wasm = results.instance.exports;
-}
 
-function sha256HashCertificate(cert) {
-  console.log("invoked");
-  bytes = Array.from(cert, (x) => x.charCodeAt(0));
-  console.log(bytes, wasm);
-  console.log(wasm.sha256HashCertificate(bytes));
-  return "abcdef";
-}
-
-module.exports = (() => {
-  return {
-    init: init(),
-    sha256HashCertificate,
-  };
-})();
+  const wasmModule = await WebAssembly.instantiate(buffer, go.importObject);
+  go.run(wasmModule.instance);
+  wasm = wasmModule.instance.exports;
+};

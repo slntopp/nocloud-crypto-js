@@ -1,5 +1,4 @@
-const { init, sha256HashCertificate } = require("./ncrypto.js");
-require("./wasm_exec.js");
+const nocloudCryptoInit = require("./ncrypto.js");
 
 const sample_cert = `-----BEGIN CERTIFICATE-----
 MIIFFTCCAv2gAwIBAgIUGkgu9yuKqUOZOydGAYLlvv+AtuIwDQYJKoZIhvcNAQEL
@@ -34,10 +33,13 @@ sPfYCb5h++Eb
 
 describe("ncrypto.wasm Tests", () => {
   beforeAll(async () => {
-    await init;
+    await nocloudCryptoInit();
   });
 
   test("Hashing works", () => {
-    expect(sha256HashCertificate(sample_cert)).toBe("abcdef");
+    bytes = Uint8Array.from(Array.from(sample_cert, (x) => x.charCodeAt(0)));
+    expect(HashCertificateSha256(bytes)).toBe(
+      "419d3335b2b533526d4e7f6f1041b3c492d086cad0f5876739800ffd51659545"
+    );
   });
 });
