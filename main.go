@@ -1,6 +1,3 @@
-//go:build js && wasm
-// +build js,wasm
-
 /*
 Copyright © 2021-2022 Nikita Ivanovski info@slnt-opp.xyz
 
@@ -24,21 +21,24 @@ import (
 	"crypto/x509"
 	"encoding/hex"
 	"encoding/pem"
+	"fmt"
 	"syscall/js"
 )
 
-//export sha256HashCertificate
-func sha256HashCertificate(jsin js.Value) (string, error) {
-	var in []byte
-	js.CopyBytesToGo(in, jsin)
-
+func HashCertificateSha256(this js.Value, args []js.Value) interface{} {
+	in := make([]byte, args[0].Get("length").Int())
+	js.CopyBytesToGo(in, args[0])
 	block, _ := pem.Decode(in)
 	cert, err := x509.ParseCertificate(block.Bytes)
 	if err != nil {
-		return "", err
+		return fmt.Sprintf("Error: %s", err.Error())
 	}
 	hash := sha256.Sum256(cert.Raw)
-	return hex.EncodeToString(hash[:]), nil
+	return hex.EncodeToString(hash[:])
 }
 
-func main() {}
+func main() {
+	wait := make(chan struct{}, 0)
+	js.Global().Set("HashCertificateSha256", js.FuncOf(HashCertificateSha256))
+	<-wait
+}
